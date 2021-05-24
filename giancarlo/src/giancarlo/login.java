@@ -34,28 +34,23 @@ public class login  implements Runnable{
     private ObjectOutputStream oo;
 
     public login() {
-        accedi=new Socket();
         log=false;
     }
-    public void accedi(Socket clientsocket){
+    public void accedi(Socket clientsocket) throws IOException{
           accedi=clientsocket;
           System.out.println(accedi.getInetAddress());
-          try {
+          
             out=new PrintWriter(accedi.getOutputStream(),true);
             in=new BufferedReader(new InputStreamReader(accedi.getInputStream()));
-             i = accedi.getInputStream();
-             o = new ObjectInputStream(i);
+//             i = accedi.getInputStream();
+//             o = new ObjectInputStream(i);
               oi = accedi.getOutputStream();
              oo = new ObjectOutputStream(oi);
             log=true;
-        } catch (IOException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
-    public void interazioni(){
+    public void interazioni() throws IOException{
         boolean ciclo=true;
         while(ciclo==true){
-        try {
             String richiesta=in.readLine();
             System.out.println(richiesta);
             String[]m=richiesta.split(":");
@@ -95,7 +90,9 @@ public class login  implements Runnable{
                         oo.writeObject(utenti.get(posizione));
                         System.out.println("u");
                     }else{
-                        oo.writeObject("0");
+                        String m1="0";
+                        oo.writeObject(m1);
+                        oo.flush();
                         System.out.println("mlwdw");
                     }
                     break;
@@ -116,10 +113,11 @@ public class login  implements Runnable{
                       //uscire
                     utenti.set(posizione, a);
                     ciclo=false;
+                    i.close();
+                    o.close();
+                    oo.close();
+                    oi.close();
             } 
-        } catch (IOException ex) {
-            Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
-        }
         }
     }
        
@@ -135,7 +133,11 @@ public class login  implements Runnable{
 
     @Override
     public void run() {
-      interazioni(); 
+       try { 
+           interazioni();
+       } catch (IOException ex) {
+           Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
+       }
     }
     
 } 

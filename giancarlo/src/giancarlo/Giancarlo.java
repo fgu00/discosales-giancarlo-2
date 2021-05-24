@@ -32,7 +32,6 @@ public class Giancarlo {
                  Socket client = server.accept();
                    PrintWriter out=new PrintWriter(client.getOutputStream(),true);
                     if(client!=null){
-                        System.out.println(client.getInetAddress()+" jdjfdofjckodf");
                         acesso.accedi(client);
                         Thread a=new Thread(acesso);
                         a.start();
